@@ -260,6 +260,15 @@ describe('TowerBrickView drag-to-click suppression', () => {
     expect(useWorkspaceStore.getState().selectedBrickId).toBe('brick-1');
   });
 
+  it('deselects the brick when it is clicked while already selected', () => {
+    renderBricks('brick-1');
+
+    fireEvent.click(brickEl('brick-1'));
+    fireEvent.click(brickEl('brick-1'));
+
+    expect(useWorkspaceStore.getState().selectedBrickId).toBeNull();
+  });
+
   it('does not select a click the hook reports as trailing a drag', () => {
     shouldSuppressClick.mockReturnValue(true);
     renderBricks('brick-1');

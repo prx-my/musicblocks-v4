@@ -303,6 +303,39 @@ describe('Workspace', () => {
     expect(useWorkspaceStore.getState().selectedBrickId).toBe('typing-root');
   });
 
+  it('deselects the brick when it is clicked while already selected', () => {
+    const { container } = render(<Workspace config={{ palette: paletteConfig }} />);
+
+    act(() => {
+      useWorkspaceStore.getState().createTower(makeNestingTower('toggle'));
+    });
+
+    const brick = container.querySelector('[data-id="toggle-outer"]') as HTMLElement;
+
+    fireEvent.click(brick);
+    expect(useWorkspaceStore.getState().selectedBrickId).toBe('toggle-outer');
+
+    fireEvent.click(brick);
+    expect(useWorkspaceStore.getState().selectedBrickId).toBeNull();
+  });
+
+  it('leaves the selection alone when a press lands on one of the brick controls', () => {
+    const { container } = render(<Workspace config={{ palette: paletteConfig }} />);
+
+    act(() => {
+      useWorkspaceStore.getState().createTower(makeTowerWithInput('control'));
+    });
+
+    fireEvent.click(container.querySelector('[data-id="control-root"]') as HTMLElement);
+    expect(useWorkspaceStore.getState().selectedBrickId).toBe('control-root');
+
+    // The number field belongs to the brick, so a press in it is not a press that puts the brick
+    // back down.
+    fireEvent.click(container.querySelector('input[type="number"]') as HTMLElement);
+
+    expect(useWorkspaceStore.getState().selectedBrickId).toBe('control-root');
+  });
+
   it('leaves the canvas untouched when a delete key arrives with nothing selected', () => {
     render(<Workspace config={{ palette: paletteConfig }} />);
 
