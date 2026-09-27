@@ -238,6 +238,24 @@ describe('Workspace', () => {
     expect(useWorkspaceStore.getState().selectedBrickId).toBeNull();
   });
 
+  it('clears the selection from the pan layer, not just the canvas beneath it', () => {
+    // Regression: the viewport covers the canvas, so on empty background the pointer lands on the
+    // viewport and the canvas' own handler never sees the press.
+    const { container } = render(<Workspace config={{ palette: paletteConfig }} />);
+
+    act(() => {
+      useWorkspaceStore.getState().createTower(makeNestingTower('pan-layer'));
+    });
+
+    const brick = container.querySelector('[data-id="pan-layer-outer"]') as HTMLElement;
+    fireEvent.click(brick);
+    expect(useWorkspaceStore.getState().selectedBrickId).toBe('pan-layer-outer');
+
+    fireEvent.click(queryViewport(container)!);
+
+    expect(useWorkspaceStore.getState().selectedBrickId).toBeNull();
+  });
+
   it('deletes a selected root and extracts then discards a selected nested brick', () => {
     const { container } = render(<Workspace config={{ palette: paletteConfig }} />);
     const tower = makeNestingTower('keyboard');
