@@ -46,8 +46,8 @@ export const BASE_GRID_SPACING = 20;
  * How long (in ms) after a moved drag ends a trailing `click` is ignored.
  *
  * A drag gesture ends with the browser releasing a native click on the element, which the palette
- * slot, a workspace brick and a canvas pan would otherwise read as an intentional press. Shared so
- * the three suppression guards cannot drift apart.
+ * slot, a workspace brick and a canvas pan would otherwise read as an intentional press. Read only
+ * by `useDragClickSuppression`, which is the one place the three share.
  */
 export const DRAG_CLICK_SUPPRESSION_MS = 250;
 
